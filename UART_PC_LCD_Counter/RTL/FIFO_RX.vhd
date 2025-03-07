@@ -1,0 +1,96 @@
+library ieee;
+use ieee.std_logic_1164.all;
+
+entity FIFO_RX is
+	generic (	B	: NATURAL := 8;
+				W 	: NATURAL := 2);
+	port(	CKHT	: IN STD_LOGIC;
+			RST		: IN STD_LOGIC;
+			RD		: IN STD_LOGIC;
+			WR		: IN STD_LOGIC;
+			DATA_WR	: IN STD_LOGIC_VECTOR(B-1 downto 0);
+			EMPTY 	: OUT STD_LOGIC;
+			DATA_RD	; OUT STD_LOGIC_VECTOR(B-1 downto 0));
+END FIFO_RX;
+
+architecture ARCH OF FIFO_RX is
+	TYPE REG_FILE_TYPE IS array (2**W-1 downto 0) OF STD_LOGIC_VECTOR(B-1 downto 0);
+
+	SIGNAL ARRAY_REG	: REG_FILE_TYPE;
+	SIGNAL W_PTR_REG	: STD_LOGIC_VECTOR(W-1 downto 0);
+	SIGNAL W_PTR_BEXT	: STD_LOGIC_VECTOR(W-1 downto 0);
+	SIGNAL W_PTR_SUCC	: STD_LOGIC_VECTOR(W-1 downto 0);
+	SIGNAL R_PTR_REG	: STD_LOGIC_VECTOR(W-1 downto 0);
+	SIGNAL R_PTR_NEXT	: STD_LOGIC_VECTOR(W-1 downto 0);
+	SIGNAL R_PTR_SUCC	: STD_LOGIC_VECTOR(W-1 downto 0);
+	
+	SIGNAL FULL_REG 	: STD_LOGIC;
+	SIGNAL FULL_NEXT 	; STD_LOGIC;
+	SIGNAL EMPTY_REG	: STD_LOGIC;
+	SIGNAL EMPTY_NEXT	: STD_LOGIC;
+	
+	SIGNAL WR_OP		: STD_LOGIC_VECTOR(1 downto 0);
+	SIGNAL WR_EN		: STD_LOGIC;
+	
+	BEGIN 
+		PROCESS(CKHT, RST)
+		BEGIN 
+			IF(RST = '1') then
+				ARRAY_REG <= (OTHERS => (OTHERS => '0'));
+			ELSIF FALLING_EDGE(CKHT) then
+				IF WR_EN = '1' then
+					ARRAY_REG (CONV_INTEGER(UNSIGNED(W_PTR_REG))) <= DATA_WR;
+				END IF;
+			END IF;
+		END PROCESS;
+		
+		DATA_RD <= ARRAY_REG(CONV_INTEGER(UNSIGNED(R_PTR_REG)));
+		WR_EN	<= WR AND (NOT FULL_REG);
+		
+		PROCESS(CKHT, RST)
+		BEGIN 
+			IF RST = '1' THEN 	W_PTR_REG	<= (OTHERS => '0');
+								R_PTR_REG 	<= (OTHERS => '0');
+								FULL_REG 	<= '0';
+								EMPTY_REG	<= '1';
+			ELSIF FALLING_EDGE(CKHT) THEN 	W_PTR_REG <= W_PTR_NEXT;
+											R_PTR_REG <= R_PTR_NEXT;
+											FULL_REG  <= FULL_NEXT;
+											EMPTY_REG <= EMPTY_NEXT;
+			END IF;
+		END PROCESS;
+		
+		W_PTR_SUCC	<= W_PTR_REG + 1;
+		R_PTR_SUCC	<= R_PTR_REG + 1;
+		WR_OP 		<= WR & RD;
+		
+		PROCESS(W_PTR_REG, W_PTR_SUCC, R_PTR_REG, R_PTR_SUCC, WR_OP, EMPTY_REG, FULL_REG)
+		BEGIN 
+			W_PTR_NEXT 	<= W_PTR_REG;
+			R_PTR_NEXT 	<= R_PTR_REG;
+			FULL_NEXT 	<= FULL_REG;
+			EMPTY_NEXT 	<= EMPTY_REG;
+			CASE WR_OP IS
+				WHEN "00"	=>
+				WHEN "01"	=> 
+					IF(EMPTY_REG = '0') THEN 	R_PTR_NEXT 	<= R_PTR_SUCC;
+												FULL_NEXT	<= '0';
+						IF (R_PTR_SUCC = W_PTR_REG) THEN EMPTY_NEXT <= '1';
+						END IF;
+					END IF;
+				WHEN "10"	=>
+					IF(FULL_REG = '0') THEN W_PTR_NEXT	<= W_PTR_SUCC;
+											EMPTY_NEXT 	<= '0';
+						IF(W_PTR_SUCC = R_PTR_REG) THEN FULL_NEXT <= '1'
+						END IF;
+					END IF;
+				WHEN OTHERS	=> 	W_PTR_NEXT 	<= W_PTR_SUCC;
+								R_PTR_NEXT	<= R_PTR_SUCC;
+			END CASE;
+		END PROCESS;
+		EMPTY	<= EMPTY_REG;
+END ARCH;
+						
+			
+	
+			
