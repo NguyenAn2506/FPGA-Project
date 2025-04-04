@@ -1,4 +1,4 @@
-### Thiết kế mạch giao tiếp FPGA với máy tính PC qua chuẩn UART, truyền mã ASCII.
+# Thiết kế mạch giao tiếp FPGA với máy tính PC qua chuẩn UART, truyền mã ASCII.
 
 Bên FPGA có 1 mạch đếm nhị phân 8 bit, đếm xung có tần số 5Hz, hiển thị kết quả đếm trên LCD ở 3 vị trí 13, 14, 15 của hàng 2 đồng thời tự động gởi giá trị đếm nhị phân 8 bit về PC.
 
