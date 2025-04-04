@@ -1,6 +1,7 @@
 # THIẾT KẾ MẠCH TRUYỀN DỮ LIỆU UART 
 ***
 ## 1. Giới thiệu:
+***
 - Bộ truyền và nhận không đồng bộ UART dùng để gửi dữ liệu qua 1 đường truyền nối tiếp.
 - UART bao gồm bộ phát và bộ nhận
 - bộ phát cần có 1 thanh ghi dịch đặc biệt để nạp dữ liệu song song và sau đó dịch từng bit ra với 1 tốc độ xác định
