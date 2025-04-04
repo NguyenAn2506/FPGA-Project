@@ -20,7 +20,6 @@
 - thông thường tốc độ baud là 2400, 4800, 9600, 19200
 
 ***
-
 ## 2. Thiết kế bộ nhận UART
 ***
 ### 2.1. Lấy mẫu
@@ -109,7 +108,7 @@ Trong mạch này, hệ thống chính sẽ nhận dữ liệu trực tiếp t�
 
 Nếu hệ thống ở xa bắt đầu việc truyền mới trước khi hệ thống chính nhận dữ liệu cũ, dữ liệu cũ này sẽ bị ghi đè lên và tạo ra lỗi được gọi là data overrun.
 
-##### b. Mạch FF có bộ đệm 1 từ
+##### **b. Mạch FF có bộ đệm 1 từ**
 **Bộ nhận với mạch giao tiếp là mạch cờ FF và có 1 ô nhớ đệm**
 ![Image](https://github.com/user-attachments/assets/4f597c3b-1e2a-4608-985a-d66e55f47294)
 
@@ -117,7 +116,7 @@ Khi tín hiệu rx_done_tick được xác định thì từ dữ liệu sẽ đ
 
 Lỗi data overrun sẽ không xảy ra nếu hệ thống chính nhận từ dữ liệu trước khi từ dữ liệu mới đến.
 
-##### c. Mạch có bộ đệm FIFO
+##### **c. Mạch có bộ đệm FIFO**
 
 Bộ đệm FIFO cung cấp một vùng nhớ đệm dùng để lưu dữ liệu.
 
@@ -162,6 +161,7 @@ Khi quá trình phát hoàn thành, tín hiệu tx_done_tick sẽ được xác 
 
 ***
 ## 4. Thiết kế hệ thống UART hoàn chỉnh
+***
 Bằng cách kết hợp bộ truyền và bộ phát, ta có thể tạo ra một hệ thống UART hoàn chỉnh như hình dưới:
 
 Tín hiệu xung **ckht** và **rst** cung cấp cho tất cả các khối.
